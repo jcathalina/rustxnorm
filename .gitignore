@@ -1,0 +1,4 @@
+/target
+Cargo.lock
+/databases/rxnorm.db
+.env
