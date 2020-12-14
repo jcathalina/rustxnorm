@@ -1,4 +1,5 @@
 from scipy.sparse import csr_matrix, load_npz
+import calc_similarity as cs
 
 
 def store_similars(filename: str):
@@ -10,3 +11,8 @@ def store_similars(filename: str):
             for mi, md in zip(match.indices, match.data):
                 if md < 0.999:  # ignore self-matches.
                     csvfile.write(f"{i}, {mi}, {md}\n")
+
+
+cs.generate_csr_matrix(src_path="../data/s1_drug_name_list_unique.csv",
+                       dest_path="../output/s1_U_cossim_matrix.npz")
+store_similars("../output/cossim_matches.csv")
