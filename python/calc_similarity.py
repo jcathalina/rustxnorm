@@ -1,7 +1,4 @@
-import numpy as np
 import pandas as pd
-import csv
-import os
 import re
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -27,17 +24,19 @@ def ngrams(string: str, n=3):
     return [''.join(ngram) for ngram in ngrams]
 
 
-print("Reading data...")
-name_list: pd.DataFrame = pd.read_csv("../data/s1_drug_name_list.csv")
-name_list: pd.Series = name_list.iloc[:, 0]
-name_list: list = name_list.tolist()
+def generate_csr_matrix(src_path: str, dest_path: str, topn=10, lower_bound=0.85):
+    print("Reading data...")
+    name_list: pd.DataFrame = pd.read_csv(src_path)
+    name_list: pd.Series = name_list.iloc[:, 0]
+    name_list: list = name_list.tolist()
 
-print("Vectorizing...")
-vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
-tf_idf_matrix = vectorizer.fit_transform(name_list)
+    print("Vectorizing...")
+    vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
+    tf_idf_matrix = vectorizer.fit_transform(name_list)
 
-print("Generating CSR matrix with matches...")
-matches: csr_matrix = awesome_cossim_topn(tf_idf_matrix, tf_idf_matrix.transpose(), 10, 0.85, use_threads=True, n_jobs=8)
+    print("Generating CSR matrix with matches...")
+    matches: csr_matrix = awesome_cossim_topn(tf_idf_matrix, tf_idf_matrix.transpose(), topn, lower_bound,
+                                              use_threads=True, n_jobs=8)
 
-print("Saving CSR matrix...")
-save_npz(file="../output/s1_cossim_matrix.npz", matrix=matches)
+    print("Saving CSR matrix...")
+    save_npz(file=dest_path, matrix=matches)
