@@ -2,3 +2,6 @@
 Cargo.lock
 /databases/rxnorm.db
 .env
+.idea
+python/notebooks/.ipynb_checkpoints
+data/aggdrug.csv
